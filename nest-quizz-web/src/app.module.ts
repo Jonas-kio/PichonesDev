@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { QuestionsModule } from './questions/questions.module';
 import { AnswersModule } from './answers/answers.module';
+import { CategoriesModule } from './categories/categories.module';
 
 
 @Module({
@@ -34,6 +35,7 @@ import { AnswersModule } from './answers/answers.module';
     UsersModule,
     QuestionsModule,
     AnswersModule,
+    CategoriesModule
   ],
 
   controllers: [],
