@@ -2,6 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { QuestionsModule } from './questions/questions.module';
+import { AnswersModule } from './answers/answers.module';
+import { CategoriesModule } from './categories/categories.module';
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -21,5 +28,21 @@ import { ConfigModule } from '@nestjs/config';
       logging: process.env.DB_LOGGING === 'true',
     }),
   ],
+      synchronize: false, 
+
+      logging: true, 
+    }),
+
+    
+    UsersModule,
+    QuestionsModule,
+    AnswersModule,
+    CategoriesModule,
+    AuthModule,
+
+  ],
+
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
