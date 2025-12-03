@@ -126,7 +126,7 @@ async getUserRoles(userId: number): Promise<string[]> {
     .where('p.activo = true')
     .getMany();
 
-  // OJO: en la entidad el campo es "nombre"
+    
   return privilegios.map((p) => p.nombre);
 }
 }
