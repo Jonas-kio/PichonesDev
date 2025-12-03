@@ -1,16 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('categorias')
+@Entity('categories')
 export class Category {
-    @PrimaryGeneratedColumn({ name: 'id_categoria' })
-    idCategoria: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column({ name: 'nombre_categoria', type: 'varchar', length: 255, nullable: true })
-    nombreCategoria: string;
+    @Column({ length: 50 })
+    name: string;
 
-    @Column({ name: 'descripcion', type: 'varchar', length: 255, nullable: true })
-    descripcion: string;
-
-    @Column({ name: 'activo', type: 'boolean', default: true })
-    activo: boolean;
+    @Column({ length: 200 })
+    description: string;
 }

@@ -12,35 +12,29 @@ export class CategoriesService {
     private readonly categoryRepo: Repository<Category>,
   ) {}
 
-  create(dto: CreateCategoryDto) {
+  async create(dto: CreateCategoryDto) {
     const category = this.categoryRepo.create(dto);
-    return this.categoryRepo.save(category);
+    return await this.categoryRepo.save(category);
   }
 
-  findAll() {
-    return this.categoryRepo.find();
+  async findAll() {
+    return await this.categoryRepo.find();
   }
 
   async findOne(id: number) {
-    const category = await this.categoryRepo.findOne({
-      where: { idCategoria: id },
-    });
-
-    if (!category) {
-      throw new NotFoundException(`Category ${id} no encontrada`);
-    }
-
+    const category = await this.categoryRepo.findOne({ where: { id } });
+    if (!category) throw new NotFoundException('Categoría no encontrada');
     return category;
   }
 
   async update(id: number, dto: UpdateCategoryDto) {
     const category = await this.findOne(id);
-    const updated = Object.assign(category, dto);
-    return this.categoryRepo.save(updated);
+    Object.assign(category, dto);
+    return await this.categoryRepo.save(category);
   }
 
   async remove(id: number) {
     const category = await this.findOne(id);
-    return this.categoryRepo.remove(category);
+    return await this.categoryRepo.remove(category);
   }
 }
