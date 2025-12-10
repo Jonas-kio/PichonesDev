@@ -1,3 +1,4 @@
+// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -7,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { QuestionsModule } from './questions/questions.module';
 import { AnswersModule } from './answers/answers.module';
 import { CategoriesModule } from './categories/categories.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -14,7 +16,6 @@ import { CategoriesModule } from './categories/categories.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -26,15 +27,13 @@ import { CategoriesModule } from './categories/categories.module';
       synchronize: process.env.DB_SYNC === 'true',
       logging: process.env.DB_LOGGING === 'true',
     }),
-
     UsersModule,
     QuestionsModule,
     AnswersModule,
     CategoriesModule,
     AuthModule,
   ],
-
-  controllers: [],
+  controllers: [AppController], // 👈 agrega esto
   providers: [],
 })
 export class AppModule {}
