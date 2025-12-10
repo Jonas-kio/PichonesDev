@@ -1,19 +1,34 @@
+// src/main.ts
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import * as fs from 'fs';
+import * as path from 'path';
 
 async function bootstrap() {
-  const httpsOptions = {
-    allowHTTP1: true, //permite que navegadores viejos usen HTTP1, pero activa HTTP/2 si es posible
-    key: fs.readFileSync('cert/key.pem'),
-    cert: fs.readFileSync('cert/cert.pem'),
-  };
+  
+  const certDir = path.join(__dirname, '..', 'cert');
+  const keyPath = path.join(certDir, 'key.pem');
+  const certPath = path.join(certDir, 'cert.pem');
 
-  const app = await NestFactory.create(AppModule, {
-    httpsOptions,
-    http2: true, //Activa HTTP/2
+ 
+  const fastifyAdapter = new FastifyAdapter({
+    http2: true, 
+    https: {
+      allowHTTP1: true, 
+      key: fs.readFileSync(keyPath),
+      cert: fs.readFileSync(certPath),
+    },
   });
+
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    fastifyAdapter,
+  );
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -22,8 +37,8 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT || 3000);
-  console.log('🚀 Servidor corriendo con HTTP/2 en https://localhost:3000');
+  await app.listen(Number(process.env.PORT) || 3000, '0.0.0.0');
+  console.log('🚀 HTTP/2 + HTTPS en https://localhost:3000');
 }
 
 bootstrap();
