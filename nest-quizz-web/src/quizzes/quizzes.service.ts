@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { Quiz } from './entities/quiz.entity';
 import { CreateQuizDto } from './dto/create-quiz.dto';
 import { UpdateQuizDto } from './dto/update-quiz.dto';
 
 @Injectable()
 export class QuizzesService {
-  create(createQuizDto: CreateQuizDto) {
-    return 'This action adds a new quiz';
+  constructor(
+    @InjectRepository(Quiz)
+    private readonly quizRepo: Repository<Quiz>,
+  ) {}
+
+  async create(dto: CreateQuizDto, usuarioId: number) {
+    const quiz = this.quizRepo.create({
+      ...dto,
+      creadoPor: usuarioId,
+      fechaCreacion: new Date(),
+      activo: dto.activo ?? true,
+    });
+
+    return await this.quizRepo.save(quiz);
   }
 
-  findAll() {
-    return `This action returns all quizzes`;
+  async findAll() {
+    return await this.quizRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} quiz`;
+  async findOne(id: number) {
+    const quiz = await this.quizRepo.findOne({ where: { id } });
+    if (!quiz) throw new NotFoundException('Examen no encontrado');
+    return quiz;
   }
 
-  update(id: number, updateQuizDto: UpdateQuizDto) {
-    return `This action updates a #${id} quiz`;
+  async update(id: number, dto: UpdateQuizDto) {
+    const quiz = await this.findOne(id);
+    Object.assign(quiz, dto);
+    return await this.quizRepo.save(quiz);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} quiz`;
+  async remove(id: number) {
+    const quiz = await this.findOne(id);
+    return await this.quizRepo.remove(quiz);
   }
 }

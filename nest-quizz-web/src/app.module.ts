@@ -9,6 +9,8 @@ import { QuestionsModule } from './questions/questions.module';
 import { AnswersModule } from './answers/answers.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AppController } from './app.controller';
+import { QuizzesModule } from './quizzes/quizzes.module';
+
 
 @Module({
   imports: [
@@ -32,8 +34,9 @@ import { AppController } from './app.controller';
     AnswersModule,
     CategoriesModule,
     AuthModule,
+    QuizzesModule,
   ],
-  controllers: [AppController], // 👈 agrega esto
+  controllers: [AppController], 
   providers: [],
 })
 export class AppModule {}
