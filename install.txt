@@ -78,6 +78,9 @@ El seed debe incluir:
 - categorías
 - exámenes de ejemplo
 - preguntas y opciones
+-----------------------------------------------------
+Opcionalmente, se incluye un backup completo (Quizz_DB.sql) para restauración directa.
+
 
 ------------------------------------------
 7. EJECUTAR EL SERVIDOR
@@ -91,32 +94,209 @@ https://localhost:3000/
 http://localhost:3000/
 
 ------------------------------------------
-8. PRUEBAS API (POSTMAN O CURL)
+8. PRUEBAS API (POSTMAN )
 ------------------------------------------
 
-LOGIN:
-curl -k -X POST https://localhost:3000/auth/login \
-  -H "Content-Type: application/json" \
-  -d "{\"correo\":\"admin@test.com\",\"password\":\"12345\"}"
+1.LOGIN:
+URL:
+      https://localhost:3000/auth/login
 
-CREAR CATEGORÍA:
-curl -k -X POST https://localhost:3000/categories \
-  -H "Authorization: Bearer TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "{\"name\":\"Matemáticas\",\"description\":\"Preguntas\"}"
+Headers: Content-Type: application/json
+Body (raw JSON):
 
-CREAR INTENTO:
-curl -k -X POST https://localhost:3000/user-quiz-attempts \
-  -H "Authorization: Bearer TOKEN_ESTUDIANTE" \
-  -H "Content-Type: application/json" \
-  -d "{\"idExamen\":1}"
+{
+  "correo": "admin@test.com",
+  "password": "12345"
+}
+--------------------------------------------
+2. USERS — Crear DOCENTE (con rol DOCENTE)
 
-RESPUESTA
-  POST https://localhost:3000/user-response
+Method: POST
+URL: 
+    https://localhost:3000/users
+Headers:
 
-  {
-  "user_id": 1,
-  "response": "Prueba correcta"
+Content-Type: application/json
+
+Authorization: Bearer {{tokenAdmin}}
+{
+  "correo": "docente@test.com",
+  "nombreCompleto": "Docente Prueba3",
+  "password": "12345",
+  "activo": true,
+  "privilegiosIds": [2]
+}
+----------------------------------------
+3. USERS — Crear ESTUDIANTE (rol ESTUDIANTE)
+Method: POST
+URL:
+     https://localhost:3000/users
+Headers:
+
+Content-Type: application/json
+
+Authorization: Bearer {{tokenAdmin}}
+
+{
+  "correo": "estudiante@test.com",
+  "nombreCompleto": "Estudiante Prueba",
+  "password": "12345",
+  "activo": true,
+  "privilegiosIds": [3]
+}
+--------------------------------------------
+4. AUTH — Login DOCENTE
+
+Method: POST
+URL:
+     https://localhost:3000/auth/login
+Headers: Content-Type: application/json
+Body:
+     {
+  "correo": "docente@test.com",
+  "password": "12345"
+}
+-----------------------------------------------
+5. AUTH — Login ESTUDIANTE
+
+Method: POST
+URL: 
+     https://localhost:3000/auth/login
+Headers: Content-Type: application/json
+Body:
+
+{
+  "correo": "estudiante@test.com",
+  "password": "12345"
+}
+---------------------------------------------------
+6.CATEGORIES — Crear (DOCENTE o ADMIN)
+
+Method: POST
+URL:
+     https://localhost:3000/categories
+Headers:
+
+Content-Type: application/json
+
+Authorization: Bearer {{tokenDocente}}
+
+Body:
+
+{
+  "name": "Matemáticas",
+  "description": "Categoría de prueba"
+}
+
+---------------------------------------------
+7. CATEGORIES — Listar (cualquiera logueado)
+
+Method: GET
+URL: 
+     https://localhost:3000/categories
+Headers: Authorization: Bearer {{tokenEstudiante}}
+
+--------------------------------------------------
+8.QUESTIONS — Crear pregunta (DOCENTE)
+
+Method: POST
+URL: https://localhost:3000/questions
+Headers:
+
+Content-Type: application/json
+
+Authorization: Bearer {{tokenDocente}}
+
+Body :
+
+{
+  "tituloPregunta": "¿Cuánto es 2 + 2?",
+  "idDificultad": 1,
+  "idEstado": 1
+}
+-----------------------------------------
+9.QUESTIONS — Listar (ESTUDIANTE)
+
+Method: GET
+URL: 
+    https://localhost:3000/questions
+    
+Headers: Authorization: Bearer {{tokenEstudiante}}
+---------------------------------------------------
+10. QUIZZES — Crear examen (DOCENTE)
+
+Method: POST
+URL: 
+     https://localhost:3000/quizzes
+Headers:
+
+Content-Type: application/json
+
+Authorization: Bearer {{tokenDocente}}
+
+Body:
+
+{
+  "titulo": "Examen de Prueba",
+  "descripcion": "Examen demo",
+  "duracionMinutos": 10,
+  "intentosPermitidos": 2,
+  "mostrarResultados": true,
+  "aleatorizarPreguntas": true,
+  "aleatorizarOpciones": true,
+  "activo": true
+}
+-----------------------------------------
+11. USER-QUIZ-ATTEMPTS — Iniciar intento (ESTUDIANTE)
+
+Aquí depende de TU ruta real. Asumo: /user-quiz-attempts
+
+Method: POST
+URL: {{baseUrl}}/user-quiz-attempts
+Headers:
+
+Content-Type: application/json
+
+Authorization: Bearer {{tokenEstudiante}}
+
+Body:
+
+{
+  "idExamen": 1
+}
+-------------------------------------------
+12. USER-QUIZ-ATTEMPTS — Finalizar intento (ESTUDIANTE)
+
+Method: PATCH
+URL: 
+     https://localhost:3000/user-quiz-attempts/1
+Headers:
+
+Content-Type: application/json
+
+Authorization: Bearer {{tokenEstudiante}}
+
+Body:
+
+{
+  "estado": "FINALIZADO"
+}
+------------------------------------------------
+13. USER-RESPONSES — Guardar respuesta (ESTUDIANTE)->falta terminar de implementar
+
+Method: POST
+URL: 
+      https://localhost:3000/user-responses
+Headers:
+
+Content-Type: application/json
+
+Authorization: Bearer {{tokenEstudiante}}
+
+{
+  "idExamen": {{quizId}},
+  "idPregunta": {{questionId}},
+  "respuesta": "4"
 }
 
 
