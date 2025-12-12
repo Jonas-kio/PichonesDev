@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserQuizAttemptDto } from './create-user-quiz-attempt.dto';
+import { IsIn, IsOptional } from 'class-validator';
 
-export class UpdateUserQuizAttemptDto extends PartialType(CreateUserQuizAttemptDto) {}
+export class UpdateUserQuizAttemptDto {
+  @IsOptional()
+  @IsIn(['FINALIZADO', 'CANCELADO'])
+  estado?: 'FINALIZADO' | 'CANCELADO';
+}

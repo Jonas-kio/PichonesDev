@@ -10,6 +10,8 @@ import { AnswersModule } from './answers/answers.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AppController } from './app.controller';
 import { QuizzesModule } from './quizzes/quizzes.module';
+import { UserQuizAttemptsModule } from './user-quiz-attempts/user-quiz-attempts.module';
+
 
 
 @Module({
@@ -35,6 +37,7 @@ import { QuizzesModule } from './quizzes/quizzes.module';
     CategoriesModule,
     AuthModule,
     QuizzesModule,
+    UserQuizAttemptsModule,
   ],
   controllers: [AppController], 
   providers: [],
