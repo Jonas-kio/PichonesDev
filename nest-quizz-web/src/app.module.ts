@@ -11,6 +11,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { AppController } from './app.controller';
 import { QuizzesModule } from './quizzes/quizzes.module';
 import { UserQuizAttemptsModule } from './user-quiz-attempts/user-quiz-attempts.module';
+import { UserResponsesModule } from './user-responses/user-responses.module';
+
 
 
 
@@ -38,6 +40,7 @@ import { UserQuizAttemptsModule } from './user-quiz-attempts/user-quiz-attempts.
     AuthModule,
     QuizzesModule,
     UserQuizAttemptsModule,
+    UserResponsesModule,
   ],
   controllers: [AppController], 
   providers: [],
