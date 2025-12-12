@@ -22,4 +22,5 @@ export class UserQuizAttempt {
 
   @Column({ name: 'estado', type: 'varchar', length: 20, default: 'EN_PROGRESO' })
   estado: 'EN_PROGRESO' | 'FINALIZADO' | 'CANCELADO';
+  
 }

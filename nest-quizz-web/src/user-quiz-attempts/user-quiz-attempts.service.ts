@@ -45,24 +45,25 @@ export class UserQuizAttemptsService {
     return await this.intentoRepo.save(intento);
   }
 
-  async findAll() {
-    return await this.intentoRepo.find({
-      order: { id: 'DESC' as any },
-    });
-  }
+async findAll() {
+  return await this.intentoRepo.find({
+    order: { id: 'DESC' },
+  });
+}
 
-  async findMine(idUsuario: number) {
-    return await this.intentoRepo.find({
-      where: { idUsuario },
-      order: { id: 'DESC' as any },
-    });
-  }
+async findMine(idUsuario: number) {
+  return await this.intentoRepo.find({
+    where: { idUsuario },
+    order: { id: 'DESC' },
+  });
+}
 
-  async findOne(id: number) {
-    const intento = await this.intentoRepo.findOne({ where: { id } });
-    if (!intento) throw new NotFoundException('Intento no encontrado');
-    return intento;
-  }
+async findOne(id: number) {
+  const intento = await this.intentoRepo.findOne({  where: { id } });
+  if (!intento) throw new NotFoundException('Intento no encontrado');
+  return intento;
+}
+
 
   async update(id: number, dto: UpdateUserQuizAttemptDto) {
   const intento = await this.findOne(id);
