@@ -1,0 +1,150 @@
+==========================================
+  INSTALL.txt — Proyecto Nest Quizz Web
+==========================================
+
+Este documento explica cómo instalar, configurar y ejecutar el proyecto.
+
+------------------------------------------
+1. REQUISITOS
+------------------------------------------
+- Node.js LTS
+- PostgreSQL 13
+- Git
+- OpenSSL (para certificados locales)
+- Postman (opcional)
+
+------------------------------------------
+2. CLONAR REPOSITORIO
+------------------------------------------
+git clone <URL_DEL_REPO>
+cd nest-quizz-web
+
+------------------------------------------
+3. INSTALAR DEPENDENCIAS
+------------------------------------------
+npm install
+
+------------------------------------------
+4. ARCHIVO .env 
+------------------------------------------
+Crear un archivo .env en la raíz con:
+
+PORT=3000
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=TU_PASSWORD
+DB_DATABASE=Quizz_DB
+
+DB_SYNC=false
+DB_LOGGING=true
+
+JWT_SECRET=CAMBIAR_ESTE_VALOR
+
+Agregar .env al .gitignore.
+
+------------------------------------------
+5. CERTIFICADOS HTTPS 
+------------------------------------------
+1. Crear carpeta:
+   mkdir cert
+
+2. Generar certificados:
+   openssl req -x509 -newkey rsa:2048 -keyout cert/key.pem -out cert/cert.pem -days 365 -nodes
+
+3. Verificar que main.ts los cargue desde: cert/key.pem y cert/cert.pem
+
+Agregar "cert/" al .gitignore.
+
+------------------------------------------
+6. BASE DE DATOS (POSTGRES 13)
+------------------------------------------
+En la carpeta "database/" deben existir 3 archivos:
+
+01-create-database.sql
+02-schema.sql
+03-seed.sql
+
+Ejecutarlos así:
+
+psql -U postgres -f database/01-create-database.sql
+psql -U postgres -d Quizz_DB -f database/02-schema.sql
+psql -U postgres -d Quizz_DB -f database/03-seed.sql
+
+El seed debe incluir:
+- usuarios de prueba (admin, docente, estudiante)
+- contraseñas hasheadas con bcrypt
+- categorías
+- exámenes de ejemplo
+- preguntas y opciones
+
+------------------------------------------
+7. EJECUTAR EL SERVIDOR
+------------------------------------------
+Modo desarrollo:
+npm run start:dev
+
+
+Acceso:
+https://localhost:3000/
+http://localhost:3000/
+
+------------------------------------------
+8. PRUEBAS API (POSTMAN O CURL)
+------------------------------------------
+
+LOGIN:
+curl -k -X POST https://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d "{\"correo\":\"admin@test.com\",\"password\":\"12345\"}"
+
+CREAR CATEGORÍA:
+curl -k -X POST https://localhost:3000/categories \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"name\":\"Matemáticas\",\"description\":\"Preguntas\"}"
+
+CREAR INTENTO:
+curl -k -X POST https://localhost:3000/user-quiz-attempts \
+  -H "Authorization: Bearer TOKEN_ESTUDIANTE" \
+  -H "Content-Type: application/json" \
+  -d "{\"idExamen\":1}"
+
+RESPUESTA
+  POST https://localhost:3000/user-response
+
+  {
+  "user_id": 1,
+  "response": "Prueba correcta"
+}
+
+
+------------------------------------------
+9. CONSIDERACIONES DE SEGURIDAD
+------------------------------------------
+- Nunca subir .env, certificados ni claves.
+- Si se subió algo por error, eliminarlo del historial con:
+  git filter-repo --path cert/ --invert-paths
+  o BFG Repo-Cleaner.
+
+------------------------------------------
+10. ESTRUCTURA RECOMENDADA DE CARPETAS
+------------------------------------------
+/cert            
+/database
+  01-create-database.sql
+  02-schema.sql
+  03-seed.sql
+/postman
+  postman_collection.json
+/src
+.env 
+.gitignore
+package.json
+README.md
+INSTALL.txt
+
+------------------------------------------
+FIN DEL DOCUMENTO
+==========================================
